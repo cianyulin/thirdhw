@@ -1,0 +1,28 @@
+<div style="text-align: center;">
+    <h1>會員註冊</h1>
+    <form method="post" action="{{ url_for('login') }}" style="display: inline-block; text-align: left;">
+        <div style="margin-bottom: 20px;">
+            <label for="username">用戶名:</label><br>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label for="email">電子郵件:</label><br>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label for="password">密碼:</label><br>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label for="phone">手機:</label><br>
+            <input type="tel" id="phone" name="phone" required>
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label for="dob">出生年月日 (YYYY-MM-DD):</label><br>
+            <input type="date" id="dob" name="dob" required>
+        </div>
+        <div style="text-align: center;">
+            <button type="submit" class="btn" style="background-color: #f3e568; color: #000">註冊</button>
+        </div>
+    </form>
+</div>
