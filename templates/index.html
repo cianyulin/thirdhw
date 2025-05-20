@@ -1,5 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>會員系統首頁</h1>
+<div style="text-align: center;">
+    <h1>會員系統首頁</h1>
+    <p>歡迎使用會員系統！請選擇以下操作：</p>
+    <div>
+        <a href="{{ url_for('login') }}" class="btn btn-primary" style="margin-right: 10px;">登入</a>
+        <a href="{{ url_for('register') }}" class="btn btn-success">註冊</a>
+    </div>
+</div>
 {% endblock %}
