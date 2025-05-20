@@ -1,3 +1,6 @@
+{% extends 'base.html' %}
+
+{% block content %}
 <div style="text-align: center;">
     <h1>會員註冊</h1>
     <form method="post" action="{{ url_for('login') }}" style="display: inline-block; text-align: left;">
@@ -26,3 +29,4 @@
         </div>
     </form>
 </div>
+{% endblock %}
