@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="text-align: center;">
+    <h1>修改基本資料</h1>
+    <form method="post" action="/edit_profile" style="display: inline-block; text-align: left;">
+        <div style="margin-bottom: 20px;">
+            <label for="username">用戶名:</label><br>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label for="email">電子郵件:</label><br>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label for="password">密碼:</label><br>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label for="phone">手機:</label><br>
+            <input type="tel" id="phone" name="phone" required>
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label for="dob">出生年月日 (YYYY-MM-DD):</label><br>
+            <input type="date" id="dob" name="dob" required>
+        </div>
+        <div style="text-align: center; display: flex; justify-content: center; gap: 20px;">
+            <button type="submit" class="btn" style="background-color: #7d68f3; color: #000;">儲存</button>
+            <a href="{{ url_for('welcome') }}" class="btn" style="background-color: #68f3bb; color: #000;">離開</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
