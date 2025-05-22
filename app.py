@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 import os
 import sqlite3
+import re
 
 def init_db():
     db_path = 'membership.db'
@@ -25,6 +26,10 @@ def init_db():
         conn.close()
 
 app = Flask(__name__)
+
+# Helper function to validate date format
+def is_valid_date(date_str):
+    return re.match(r'^\d{4}-\d{2}-\d{2}$', date_str) is not None
 
 @app.route('/')
 #首頁
@@ -79,6 +84,10 @@ def register():
         if not username or not email or not password:
             return render_template('error.html', error="請輸入用戶名、電子郵件和密碼")
 
+        # Optional validation for date format
+        if birthdate and not is_valid_date(birthdate):
+            return render_template('error.html', error="出生年月日格式不正確，請使用 YYYY-MM-DD 格式")
+
         conn = sqlite3.connect('membership.db')
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM members WHERE username = ?", (username,))
@@ -110,6 +119,11 @@ def edit_profile(iid):
         password = request.form.get('password')
         phone = request.form.get('phone')
         birthdate = request.form.get('dob')
+
+        # Optional validation for date format
+        if birthdate and not is_valid_date(birthdate):
+            conn.close()
+            return render_template('error.html', error="出生年月日格式不正確，請使用 YYYY-MM-DD 格式")
 
         # 檢查欄位是否為空
         if not email or not password:
@@ -151,6 +165,15 @@ def edit_profile(iid):
     return render_template('edit_profile.html', user={
         'username': user[0]
     }, iid=iid)
+
+@app.route('/delete/<int:iid>', methods=['GET'])
+def delete_user(iid):
+    conn = sqlite3.connect('membership.db')
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM members WHERE iid = ?", (iid,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('index'))
 
 @app.template_filter('add_stars')
 def add_stars(s):

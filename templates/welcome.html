@@ -13,7 +13,7 @@
 <script>
     function confirmDelete() {
         if (confirm("若刪除這個使用者，所有相關記錄將一併刪除，是否繼續？")) {
-            window.location.href = "{{ url_for('index') }}";
+            window.location.href = "{{ url_for('delete_user', iid=iid) }}";
         }
     }
 </script>
