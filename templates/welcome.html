@@ -5,7 +5,7 @@
     <h1>歡迎，{{ user_name|add_stars }}</h1>
     <p>您已成功登入會員系統！</p>
     <div>
-        <a href="{{ url_for('edit_profile') }}" class="btn" style="background-color: #6df368; color: #000;margin-right: 30px;">修改基本資料</a>
+        <a href="{{ url_for('edit_profile', iid=iid) }}" class="btn btn-primary" style="margin-right: 30px;">修改基本資料</a>
         <button class="btn btn-warning" style="margin-right: 30px;" onclick="confirmDelete()">刪除使用者</button>
         <a href="{{ url_for('index') }}" class="btn" style="background-color: #68def3; color: #000;" >返回首頁</a>
     </div>

@@ -41,14 +41,15 @@ def login():
         # 查詢資料庫
         conn = sqlite3.connect('membership.db')
         cursor = conn.cursor()
-        cursor.execute("SELECT username FROM members WHERE email = ? AND password = ?", (email, password))
+        cursor.execute("SELECT iid, username FROM members WHERE email = ? AND password = ?", (email, password))
         user = cursor.fetchone()
         conn.close()
 
         # 檢查帳密是否正確
         if user:
-            username = user[0]
-            return render_template('welcome.html', user_name=username)
+            iid = user[0]  # 使用者 ID
+            username = user[1]  # 使用者名稱
+            return render_template('welcome.html', user_name=username, iid=iid)
         else:
             return render_template('error.html', error="電子郵件或密碼錯誤")
 
@@ -99,10 +100,57 @@ def register():
     # 如果是 GET 方法，就顯示註冊表單
     return render_template('register.html')
 
-@app.route('/edit_profile')
-#編輯個人資料
-def edit_profile():
-    return render_template('edit_profile.html')
+@app.route('/edit_profile/<int:iid>', methods=['GET', 'POST'])
+def edit_profile(iid):
+    conn = sqlite3.connect('membership.db')
+    cursor = conn.cursor()
+
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        phone = request.form.get('phone')
+        birthdate = request.form.get('dob')
+
+        # 檢查欄位是否為空
+        if not email or not password:
+            conn.close()
+            return render_template('error.html', error="請輸入電子郵件和密碼")
+
+        # 電子郵件是否已被其他使用者使用（不包括自己）
+        cursor.execute("SELECT * FROM members WHERE email = ? AND iid != ?", (email, iid))
+        if cursor.fetchone():
+            conn.close()
+            return render_template('error.html', error="電子郵件已被使用")
+
+        # 更新資料
+        cursor.execute("""
+            UPDATE members
+            SET email = ?, password = ?, phone = ?, birthdate = ?
+            WHERE iid = ?
+        """, (email, password, phone, birthdate, iid))
+        conn.commit()
+
+        # 再次抓 username 傳回 welcome 頁
+        cursor.execute("SELECT username FROM members WHERE iid = ?", (iid,))
+        user = cursor.fetchone()
+        conn.close()
+
+        if user:
+            return render_template('welcome.html', user_name=user[0], iid=iid)
+        else:
+            return render_template('error.html', error="找不到使用者")
+
+    # GET 方法：只抓 username 顯示在表單（其他不預填）
+    cursor.execute("SELECT username FROM members WHERE iid = ?", (iid,))
+    user = cursor.fetchone()
+    conn.close()
+
+    if not user:
+        return render_template('error.html', error="用戶不存在")
+
+    return render_template('edit_profile.html', user={
+        'username': user[0]
+    }, iid=iid)
 
 @app.template_filter('add_stars')
 def add_stars(s):
