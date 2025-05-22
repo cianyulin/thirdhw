@@ -50,6 +50,39 @@ def welcome():
 def register():
     return render_template('register.html')
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        phone = request.form.get('phone')
+        birthdate = request.form.get('dob')
+        # 用戶名、電子郵件或密碼是否為空，若為空，顯示錯誤頁面，提示「請輸入用戶名、電子郵件和密碼」
+        if not username or not email or not password:
+            return render_template('error.html', error="請輸入用戶名、電子郵件和密碼")
+
+        conn = sqlite3.connect('membership.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM members WHERE username = ?", (username,))
+        existing_user = cursor.fetchone()
+        # 用戶名是否已存在於資料庫中，若存在，顯示錯誤頁面，提示「用戶名已存在」
+        if existing_user:
+            conn.close()
+            return render_template('error.html', error="用戶名已存在")
+
+        cursor.execute(
+            "INSERT INTO members (username, email, password, phone, birthdate) VALUES (?, ?, ?, ?, ?)",
+            (username, email, password, phone, birthdate)
+        )
+        conn.commit()
+        conn.close()
+
+        return render_template('login.html')  # 註冊成功，導向登入頁
+
+    # 如果是 GET 方法，就顯示註冊表單
+    return render_template('register.html')
+
 @app.route('/edit_profile')
 #編輯個人資料
 def edit_profile():
