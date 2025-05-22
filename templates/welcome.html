@@ -6,8 +6,15 @@
     <p>您已成功登入會員系統！</p>
     <div>
         <a href="{{ url_for('edit_profile') }}" class="btn" style="background-color: #6df368; color: #000;margin-right: 30px;">修改基本資料</a>
-        <button class="btn btn-warning" style="margin-right: 30px;">刪除使用者</button>
+        <button class="btn btn-warning" style="margin-right: 30px;" onclick="confirmDelete()">刪除使用者</button>
         <a href="{{ url_for('index') }}" class="btn" style="background-color: #68def3; color: #000;" >返回首頁</a>
     </div>
 </div>
+<script>
+    function confirmDelete() {
+        if (confirm("若刪除這個使用者，所有相關記錄將一併刪除，是否繼續？")) {
+            window.location.href = "{{ url_for('index') }}";
+        }
+    }
+</script>
 {% endblock %}
