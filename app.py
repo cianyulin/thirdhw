@@ -31,10 +31,30 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 #登入
 def login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        # 查詢資料庫
+        conn = sqlite3.connect('membership.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT username FROM members WHERE email = ? AND password = ?", (email, password))
+        user = cursor.fetchone()
+        conn.close()
+
+        # 檢查帳密是否正確
+        if user:
+            username = user[0]
+            return render_template('welcome.html', user_name=username)
+        else:
+            return render_template('error.html', error="電子郵件或密碼錯誤")
+
+    # GET 方法時顯示登入頁面
     return render_template('login.html')
+
 
 @app.route('/welcome', methods=['GET', 'POST'])
 #歡迎頁面
@@ -45,12 +65,8 @@ def welcome():
         return render_template('welcome.html', user_name=user_name)
     return render_template('welcome.html')
 
-@app.route('/register')
-#註冊
-def register():
-    return render_template('register.html')
-
 @app.route('/register', methods=['GET', 'POST'])
+#註冊
 def register():
     if request.method == 'POST':
         username = request.form.get('username')
